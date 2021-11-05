@@ -10,6 +10,9 @@
 # x and y are the position
 # user = 1 or user = 2 for player1 and player2
 
+from tkinter.constants import FALSE, TRUE
+
+
 def isfilled(board) :
     filled = 0
     for i in range(len(board)-1) :
@@ -18,9 +21,9 @@ def isfilled(board) :
                 # 0 for filled
                 filled += 1
     if filled == 9 :
-        return 0
+        return True
     # 1 for not filled
-    return 1
+    return False
 
 def print_symbole (board, x, y, player) :
     # board[x][y] == 0 means the case is empty
@@ -34,69 +37,24 @@ def print_symbole (board, x, y, player) :
         return 0
 
 
-def check (board, x, y, player) :
-    # check the column
-    win = 0
+def check (board, player) :
 
-    # cases aboves for column
-    i = x
-    j = y
-    while i < 3 :
-        if board[i][j] == player :
-            win += 1
-        i += 1
+    # check all lines
+    for i in range(len(board)) :
+        if(board[i][0] == board[i][1] == board[i][2] == player) :
+            return player
 
-    # cases below for column
-    i = x
-    j = y
-    while i >=0 :
-        if board[i][j] == player :
-            win += 1
-        i -= 1
-
-    if win >= 3 :
-        # means the player won
+    # check all columns
+    for i in range(len(board)) :
+        if(board[0][i] == board[1][i] == board[2][i] == player) :
+            return player
+    
+    # check diagonal top left to bottom right
+    if(board[0][0] == board[1][1] == board[2][2] == player) :
         return player
-
-    # check the line
-    win = 0
-    # cases right for line
-    i = x
-    j = y
-    while j < 3 :
-        if board[i][j] == player :
-            win += 1
-        j += 1
-
-    # cases left for line
-    i = x
-    j = y
-    while j >= 0 :
-        if board[i][j] == player :
-            win += 1
-        j -= 1
-
-    if win >= 3 :
-        # means the player won
-        return player
-
-    # check the diagonal
-    win = 0
-    # diagonal top left to bottom right
-    for i in range(len(board)-1) :
-        if board[i][i] == player :
-            win += 1
-
-    # diagonal bottom left to top right
-    i = 2
-    while i >= 0 :
-        for j in range(len(board)-1) :
-            if board[i][j] == player :
-                win += 1
-        i -= 1
-
-    if win >= 3 :
-        # means the player won
+    
+    # check diagonal bottom left to top right
+    if(board[2][0] == board[1][1] == board[0][2] == player) :
         return player
     
     return 0
