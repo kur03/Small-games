@@ -14,6 +14,7 @@ from game import isfilled
 
 board = [[0,0,0], [0,0,0], [0,0,0]]
 player = 1
+check_winner = 0
 
 def Close(window):
     window.destroy()
@@ -22,7 +23,7 @@ def menu_bar(window) :
     # barre de menu
     bar = Menu(window)
     file_menu = Menu(bar, tearoff=0)
-    file_menu.add_command(label="Nouveau")
+    file_menu.add_command(label="New")
     file_menu.add_command(label="Leave", command=window.quit)
     bar.add_cascade(label="Options", menu=file_menu)
 
@@ -51,12 +52,13 @@ def start() :
     label_subtitle.pack()
 
     # ajouter un btn
-    play_btn = Button(frame, text="Play", font=("Helvetica", 15), background='white', foreground='#41b77f', command=lambda: [display_board(), Close(welcome_page)])
+    play_btn = Button(frame, text="Play", font=("Helvetica", 15), background='white', foreground='#41b77f', command=lambda: [display_board(player, check_winner), Close(welcome_page)])
     play_btn.pack(pady=25, fill=X)
     frame.pack(expand=YES)
     menu_bar(welcome_page)
 
-def display_board() :
+# display the game board
+def display_board(player, check_winner) :
     # créer ne première fenêtre
     board_page = Tk()
     # personnaliser la fenêtre
@@ -65,37 +67,49 @@ def display_board() :
     board_page.minsize(300, 300)
     board_page.config(background='#41b77f')
 
-    board_frame = Frame(board_page, bg='#41b77f')
-    for i in range(len(board)) :
-        for j in range(len(board)) :
-            if board[i][j] == 0 :
-                Button(board_frame, background='grey', command=lambda x=i, y=j: [play(x, y)]).grid(row=i, column=j)
-            elif board[i][j] == 1 :
-               Label(board_frame, text="X", font=(50), background='grey', foreground='red').grid(row=i, column=j)
-            else :
-               Label(board_frame, text="O", font=(50), background='grey', foreground='blue').grid(row=i, column=j)
+    filled = isfilled(board)
+    if check_winner == 1 :
+        Label(board_page, text="Player 1 won!", font=("Helvetica", 15), background='#41b77f', foreground='white').pack()
+    elif check_winner == 2 :
+        Label(board_page, text="Player 2 won!", font=("Helvetica", 15), background='#41b77f', foreground='white').pack()
+    if filled != 1 :
+        Label(board_page, text="It's a draw!",font=("Helvetica", 15), background='#41b77f', foreground='white').pack()
 
-    menu_bar(board_page)
+    else :
+        board_frame = Frame(board_page, bg='#41b77f')
+        board_frame.grid_rowconfigure(0, weight=1)
+        board_frame.grid_columnconfigure(0, weight=1)
+        for i in range(len(board)) :
+            for j in range(len(board)) :
+                if board[i][j] == 0 :
+                    Button(board_frame, background='grey', height= 10, width=20, command=lambda x=i, y=j: [play(x, y, player), Close(board_page)]).grid(row=i, column=j)
+                elif board[i][j] == 1 :
+                    Label(board_frame, text="X", height= 8, width=8, font=(50), background='grey', foreground='red').grid(row=i, column=j)
+                else :
+                    Label(board_frame, text="O", height= 8, width=8, font=(50), background='grey', foreground='blue').grid(row=i, column=j)
 
-    board_frame.pack(expand=YES)
+        menu_bar(board_page)
 
-def play(x, y) :
-    print_symbole(board, x, y, player)
+        board_frame.pack(expand=YES)
+
+def play(x, y, player) :
+    symbole = print_symbole(board, x, y, player)
+    if player == 1 :
+        player = 2
+    else :
+        player = 1
+    check_winner = check(board, x, y, player)
+    print(check_winner)
+    display_board(player, check_winner)
+
 
 start()
 mainloop()
 
-"""board[3][3] = [[0,0,0], [0,0,0], [0,0,0]]
-
-def Close(window):
-    window.destroy()
 
 
-def menu(window):
-    btn_retour = Button(window, text="Menu", command=lambda: [w_accueil(), Close(window)])
-    btn_retour.pack(pady=10)
 
-def w_accueil():
+"""def w_accueil():
     accueil = Tk()
     accueil.title("Tic-Tac-Toe")
     accueil.geometry("2048x1780")
