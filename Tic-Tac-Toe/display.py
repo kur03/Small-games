@@ -98,7 +98,6 @@ def finished(window) :
 
 def play(window, frame, board, x, y) :
     global player
-    print("player = %d"%player)
     symbole = print_symbole(board, x, y, player)
     if symbole == 0 :
         messagebox.showinfo("Error", "You cannot play here")
@@ -126,8 +125,10 @@ def play(window, frame, board, x, y) :
             player = 1
 
         # we check if the board is filled and we can play
-        if (isfilled(board) == True) :
+        filled = isfilled(board)
+        if (filled == True) :
             messagebox.showinfo("Draw", "It's a draw!")
+            player = 1
             finished(window)
     
 
